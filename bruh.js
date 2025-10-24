@@ -21,7 +21,6 @@ class BruhCodec {
     const imageData = ctx.getImageData(0, 0, width, height)
     const data = imageData.data
 
-    // küçük boyut, yüksek kalite
     for (let i = 0; i < data.length; i += 4) {
       data[i] = Math.round(data[i] / 8) * 8
       data[i + 1] = Math.round(data[i + 1] / 8) * 8
