@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUH Viewer</title>
+<meta name="color-scheme" content="dark light">
+<style>
+:root{--bg:#0b0c10;--fg:#e5e7eb;--muted:#a3a3a3;--panel:#12141a;--line:#202532;--accent:#6d6ef6;--accent2:#22c55e;--danger:#ef4444}
+:root[data-theme="light"]{--bg:#ffffff;--fg:#0b0c10;--muted:#6b7280;--panel:#f5f7fb;--line:#e7e9ef}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+.wrap{max-width:1200px;margin:0 auto;padding:20px;display:grid;gap:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:conic-gradient(from 210deg at 50% 50%,#111 0 40%,#3b82f6 40% 65%,#8b5cf6 65% 85%,#22c55e 85% 100%);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.logo svg{width:22px;height:22px}
+.hx{display:flex;flex-direction:column}
+.h1{font-weight:800;letter-spacing:.2px}
+.badge{font-size:11px;color:var(--muted)}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sel,.btn,.inp{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:10px;padding:9px 12px}
+.inp{min-width:120px}
+.btn.primary{background:linear-gradient(90deg,var(--accent),#8b5cf6);border-color:transparent;color:#fff}
+.btn.success{background:linear-gradient(90deg,var(--accent2),#16a34a);border-color:transparent;color:#fff}
+.btn.ghost{background:var(--panel)}
+.tox{width:48px;height:28px;border:1px solid var(--line);border-radius:999px;background:var(--panel);position:relative;cursor:pointer}
+.kn{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:999px;background:#fff;transition:.2s}
+.tox.on{background:linear-gradient(90deg,var(--accent),#8b5cf6);border-color:transparent}
+.tox.on .kn{transform:translateX(20px)}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:16px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tab{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer}
+.tab.act{background:linear-gradient(90deg,var(--accent),#8b5cf6);border-color:transparent;color:#fff}
+.title{font-weight:700;margin-bottom:8px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:20px;text-align:center;color:var(--muted);display:grid;gap:10px}
+.drop.drag{border-color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+input[type=file]{display:none}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.kv{border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.canvas-box{min-height:340px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;overflow:auto;background:linear-gradient(45deg,#0001,#0000)}
+canvas{max-width:100%;height:auto;border-radius:10px;image-rendering:auto}
+.tools{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.small{font-size:12px;color:var(--muted)}
+.link{color:var(--accent);text-decoration:none}
+.hidden{display:none}
+.sp{height:1px;background:var(--line);margin:10px 0}
+.foot{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;gap:10px;flex-wrap:wrap}
+.bad{color:var(--danger)}
+.switcher{display:flex;gap:6px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px}
+kbd{background:#00000033;border:1px solid #ffffff26;border-radius:6px;padding:1px 6px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 17c4.5-2 7.5-2 16-2M4 7c5 0 8 2 16 2" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="12" r="2" fill="white"/></svg></div>
+      <div class="hx">
+        <div class="h1" id="appTitle">BRUH Viewer</div>
+        <div class="badge" id="appTag">headerless • EXIF-less</div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="switcher">
+        <select id="lang" class="sel">
+          <option value="en">English</option>
+          <option value="tr">Türkçe</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="ru">Русский</option>
+          <option value="ar">العربية</option>
+          <option value="ja">日本語</option>
+        </select>
+        <div id="theme" class="tox on" aria-label="Theme toggle"><div class="kn"></div></div>
+      </div>
+      <select id="fitMode" class="sel">
+        <option value="fit">Fit</option>
+        <option value="fill">Fill</option>
+        <option value="1x">1×</option>
+        <option value="2x">2×</option>
+        <option value="4x">4×</option>
+      </select>
+      <button id="dlPNG" class="btn ghost hidden">Download PNG</button>
+      <button id="dlBRUH" class="btn primary hidden">Download .bruh</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="tabs">
+        <button id="tabView" class="tab act">View .bruh</button>
+        <button id="tabConv" class="tab">Convert to .bruh</button>
+      </div>
+
+      <div id="panelView">
+        <div class="title" id="vTitle">Open .bruh</div>
+        <div id="dropBruh" class="drop">
+          <div id="vDropTitle">Drop your .bruh file</div>
+          <div id="vDropHint">or choose a file</div>
+          <div class="row">
+            <label class="btn primary" for="inBruh" id="vPick">Choose .bruh</label>
+            <input id="inBruh" type="file" accept=".bruh">
+          </div>
+        </div>
+        <div class="meta">
+          <div class="kv" id="vName">name: —</div>
+          <div class="kv" id="vSize">size: —</div>
+          <div class="kv" id="vDims">dims: —</div>
+          <div class="kv" id="vInfo">info: —</div>
+        </div>
+        <div class="tools">
+          <button id="zIn" class="btn ghost">+</button>
+          <button id="zOut" class="btn ghost">−</button>
+          <button id="z100" class="btn ghost">100%</button>
+          <span class="small" id="zLabel">Zoom: 100%</span>
+        </div>
+      </div>
+
+      <div id="panelConv" class="hidden">
+        <div class="title" id="cTitle">Convert any image → .bruh</div>
+        <div id="dropAny" class="drop">
+          <div id="cDropTitle">Drop JPG/PNG/WebP/ICO/SVG</div>
+          <div id="cDropHint">or choose an image</div>
+          <div class="row">
+            <label class="btn success" for="inAny" id="cPick">Choose image</label>
+            <input id="inAny" type="file" accept="image/*,.ico,.svg">
+          </div>
+        </div>
+        <div class="meta">
+          <div class="kv" id="cName">name: —</div>
+          <div class="kv" id="cSize">size: —</div>
+          <div class="kv" id="cDims">dims: —</div>
+          <div class="kv" id="cInfo">info: —</div>
+        </div>
+        <div class="tools">
+          <label class="pill"><span id="cMaxLabel">Max:</span><select id="maxRes" class="sel"><option value="0">Original</option><option value="1920x1080">FHD</option><option value="2560x1440">QHD</option><option value="3840x2160" selected>4K</option></select></label>
+          <label class="pill"><span id="cChLabel">Channels:</span><select id="chanSel" class="sel"><option value="rgba" selected>RGBA</option><option value="rgb">RGB</option></select></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title" id="pTitle">Preview</div>
+      <div class="canvas-box"><canvas id="cv"></canvas></div>
+      <div class="sp"></div>
+      <div class="foot">
+        <div id="status">Ready</div>
+        <div class="small"><kbd>Ctrl</kbd> + <kbd>Wheel</kbd></div>
+        <a id="dlLink" class="link hidden" download>download</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const i18n={
+  en:{title:"BRUH Viewer",tag:"headerless • EXIF-less",tabV:"View .bruh",tabC:"Convert to .bruh",vTitle:"Open .bruh",vDropTitle:"Drop your .bruh file",vDropHint:"or choose a file",vPick:"Choose .bruh",cTitle:"Convert any image → .bruh",cDropTitle:"Drop JPG/PNG/WebP/ICO/SVG",cDropHint:"or choose an image",cPick:"Choose image",name:"name",size:"size",dims:"dims",info:"info",zoom:"Zoom",preview:"Preview",ready:"Ready",invalid:"Invalid .bruh file",png:"Download PNG",bruh:"Download .bruh",download:"download",ok:"OK",max:"Max",channels:"Channels",fit:"Fit",fill:"Fill"},
+  tr:{title:"BRUH Görüntüleyici",tag:"başlıksız • EXIF’siz",tabV:".bruh görüntüle",tabC:".bruh’a dönüştür",vTitle:".bruh aç",vDropTitle:".bruh dosyanı bırak",vDropHint:"veya dosya seç",vPick:".bruh seç",cTitle:"Her resmi → .bruh",cDropTitle:"JPG/PNG/WebP/ICO/SVG bırak",cDropHint:"veya resim seç",cPick:"Resim seç",name:"isim",size:"boyut",dims:"boyut",info:"bilgi",zoom:"Yakınlık",preview:"Önizleme",ready:"Hazır",invalid:"Geçersiz .bruh dosyası",png:"PNG İndir",bruh:".bruh İndir",download:"indir",ok:"Tamam",max:"Maks",channels:"Kanallar",fit:"Sığdır",fill:"Doldur"},
+  es:{title:"Visor BRUH",tag:"sin cabecera • sin EXIF",tabV:"Ver .bruh",tabC:"Convertir a .bruh",vTitle:"Abrir .bruh",vDropTitle:"Suelta tu archivo .bruh",vDropHint:"o elige un archivo",vPick:"Elegir .bruh",cTitle:"Convierte cualquier imagen → .bruh",cDropTitle:"Suelta JPG/PNG/WebP/ICO/SVG",cDropHint:"o elige una imagen",cPick:"Elegir imagen",name:"nombre",size:"tamaño",dims:"dimensiones",info:"info",zoom:"Zoom",preview:"Vista previa",ready:"Listo",invalid:"Archivo .bruh no válido",png:"Descargar PNG",bruh:"Descargar .bruh",download:"descargar",ok:"OK",max:"Máx",channels:"Canales",fit:"Ajustar",fill:"Rellenar"},
+  fr:{title:"Visionneuse BRUH",tag:"sans en-tête • sans EXIF",tabV:"Voir .bruh",tabC:"Convertir en .bruh",vTitle:"Ouvrir .bruh",vDropTitle:"Déposez votre fichier .bruh",vDropHint:"ou choisissez un fichier",vPick:"Choisir .bruh",cTitle:"Convertir une image → .bruh",cDropTitle:"Déposez JPG/PNG/WebP/ICO/SVG",cDropHint:"ou choisissez une image",cPick:"Choisir une image",name:"nom",size:"taille",dims:"dimensions",info:"info",zoom:"Zoom",preview:"Aperçu",ready:"Prêt",invalid:"Fichier .bruh invalide",png:"Télécharger PNG",bruh:"Télécharger .bruh",download:"télécharger",ok:"OK",max:"Max",channels:"Canaux",fit:"Ajuster",fill:"Remplir"},
+  de:{title:"BRUH Viewer",tag:"kopflos • EXIF-frei",tabV:".bruh anzeigen",tabC:"Zu .bruh konvertieren",vTitle:".bruh öffnen",vDropTitle:"Ziehe deine .bruh-Datei hierher",vDropHint:"oder Datei wählen",vPick:".bruh wählen",cTitle:"Beliebiges Bild → .bruh",cDropTitle:"JPG/PNG/WebP/ICO/SVG ablegen",cDropHint:"oder Bild wählen",cPick:"Bild wählen",name:"name",size:"größe",dims:"maße",info:"info",zoom:"Zoom",preview:"Vorschau",ready:"Bereit",invalid:"Ungültige .bruh-Datei",png:"PNG herunterladen",bruh:".bruh herunterladen",download:"herunterladen",ok:"OK",max:"Max",channels:"Kanäle",fit:"Einpassen",fill:"Füllen"},
+  ru:{title:"Просмотрщик BRUH",tag:"без заголовка • без EXIF",tabV:"Открыть .bruh",tabC:"Преобразовать в .bruh",vTitle:"Открыть .bruh",vDropTitle:"Перетащите файл .bruh",vDropHint:"или выберите файл",vPick:"Выбрать .bruh",cTitle:"Любое изображение → .bruh",cDropTitle:"Перетащите JPG/PNG/WebP/ICO/SVG",cDropHint:"или выберите изображение",cPick:"Выбрать изображение",name:"имя",size:"размер",dims:"размеры",info:"инфо",zoom:"Масштаб",preview:"Предпросмотр",ready:"Готово",invalid:"Неверный файл .bruh",png:"Скачать PNG",bruh:"Скачать .bruh",download:"скачать",ok:"OK",max:"Макс",channels:"Каналы",fit:"Уместить",fill:"Заполнить"},
+  ar:{title:"عارض BRUH",tag:"بدون ترويسة • بدون EXIF",tabV:"عرض ‎.bruh",tabC:"تحويل إلى ‎.bruh",vTitle:"افتح ‎.bruh",vDropTitle:"أسقط ملف ‎.bruh هنا",vDropHint:"أو اختر ملفًا",vPick:"اختر ‎.bruh",cTitle:"حوّل أي صورة → ‎.bruh",cDropTitle:"أسقط JPG/PNG/WebP/ICO/SVG",cDropHint:"أو اختر صورة",cPick:"اختر صورة",name:"الاسم",size:"الحجم",dims:"الأبعاد",info:"المعلومات",zoom:"التقريب",preview:"المعاينة",ready:"جاهز",invalid:"ملف ‎.bruh غير صالح",png:"حمّل PNG",bruh:"حمّل ‎.bruh",download:"تنزيل",ok:"تم",max:"أقصى",channels:"القنوات",fit:"احتواء",fill:"ملء"},
+  ja:{title:"BRUH ビューア",tag:"ヘッダーなし・EXIFなし",tabV:".bruhを表示",tabC:".bruhへ変換",vTitle:".bruhを開く",vDropTitle:".bruhファイルをドロップ",vDropHint:"またはファイルを選択",vPick:".bruh を選択",cTitle:"任意の画像 → .bruh",cDropTitle:"JPG/PNG/WebP/ICO/SVG をドロップ",cDropHint:"または画像を選択",cPick:"画像を選択",name:"名前",size:"サイズ",dims:"寸法",info:"情報",zoom:"ズーム",preview:"プレビュー",ready:"準備完了",invalid:".bruhファイルが不正です",png:"PNG をダウンロード",bruh:".bruh をダウンロード",download:"ダウンロード",ok:"OK",max:"最大",channels:"チャンネル",fit:"フィット",fill:"フィル"}
+}
+const el=id=>document.getElementById(id)
+const S={lang:localStorage.getItem("bruh_lang")||"en",theme:localStorage.getItem("bruh_theme")||"dark",zoom:1,lastBruh:null,lastDims:null,fitMode:localStorage.getItem("bruh_fit")||"fit"}
+const ui={appTitle:el("appTitle"),appTag:el("appTag"),lang:el("lang"),theme:el("theme"),dlPNG:el("dlPNG"),dlBRUH:el("dlBRUH"),tabView:el("tabView"),tabConv:el("tabConv"),panelView:el("panelView"),panelConv:el("panelConv"),vTitle:el("vTitle"),vDropTitle:el("vDropTitle"),vDropHint:el("vDropHint"),vPick:el("vPick"),cTitle:el("cTitle"),cDropTitle:el("cDropTitle"),cDropHint:el("cDropHint"),cPick:el("cPick"),vName:el("vName"),vSize:el("vSize"),vDims:el("vDims"),vInfo:el("vInfo"),cName:el("cName"),cSize:el("cSize"),cDims:el("cDims"),cInfo:el("cInfo"),zIn:el("zIn"),zOut:el("zOut"),z100:el("z100"),zLabel:el("zLabel"),cv:el("cv"),dropBruh:el("dropBruh"),dropAny:el("dropAny"),inBruh:el("inBruh"),inAny:el("inAny"),pTitle:el("pTitle"),status:el("status"),dlLink:el("dlLink"),fitMode:el("fitMode"),maxRes:el("maxRes"),chanSel:el("chanSel"),cMaxLabel:el("cMaxLabel"),cChLabel:el("cChLabel")}
+function fmt(n){const u=["B","KB","MB","GB"];let i=0;while(n>=1024&&i<u.length-1){n/=1024;i++}return `${n.toFixed(2)} ${u[i]}`}
+function setDirByLang(l){const rtl=new Set(["ar"]);document.documentElement.setAttribute("dir",rtl.has(l)?"rtl":"ltr")}
+function setLang(l){S.lang=l;localStorage.setItem("bruh_lang",l);const d=i18n[l];document.title=d.title;ui.appTitle.textContent=d.title;ui.appTag.textContent=d.tag;ui.tabView.textContent=d.tabV;ui.tabConv.textContent=d.tabC;ui.vTitle.textContent=d.vTitle;ui.vDropTitle.textContent=d.vDropTitle;ui.vDropHint.textContent=d.vDropHint;ui.vPick.textContent=d.vPick;ui.cTitle.textContent=d.cTitle;ui.cDropTitle.textContent=d.cDropTitle;ui.cDropHint.textContent=d.cDropHint;ui.cPick.textContent=d.cPick;ui.pTitle.textContent=d.preview;ui.status.textContent=d.ready;ui.zLabel.textContent=`${d.zoom}: ${(S.zoom*100|0)}%`;ui.dlPNG.textContent=d.png;ui.dlBRUH.textContent=d.bruh;ui.dlLink.textContent=d.download;ui.vName.textContent=`${d.name}: —`;ui.vSize.textContent=`${d.size}: —`;ui.vDims.textContent=`${d.dims}: —`;ui.vInfo.textContent=`${d.info}: —`;ui.cName.textContent=`${d.name}: —`;ui.cSize.textContent=`${d.size}: —`;ui.cDims.textContent=`${d.dims}: —`;ui.cInfo.textContent=`${d.info}: —`;ui.fitMode.options[0].text=d.fit;ui.fitMode.options[1].text=d.fill;ui.cMaxLabel.textContent=`${d.max}:`;ui.cChLabel.textContent=`${d.channels}:`;setDirByLang(l)}
+function setTheme(th){S.theme=th;localStorage.setItem("bruh_theme",th);document.documentElement.setAttribute("data-theme",th==="dark"?"dark":"light");ui.theme.classList.toggle("on",th==="dark")}
+function selectTab(v){const isView=v==="view";ui.tabView.classList.toggle("act",isView);ui.tabConv.classList.toggle("act",!isView);ui.panelView.classList.toggle("hidden",!isView);ui.panelConv.classList.toggle("hidden",isView)}
+function header(buf){if(buf.byteLength<10)return null;const u8=new Uint8Array(buf);const sig=String.fromCharCode(u8[0],u8[1],u8[2],u8[3],u8[4],u8[5]);if(sig!=="BRUH01")return null;const w=u8[6]|(u8[7]<<8);const h=u8[8]|(u8[9]<<8);const need=w*h*4;const have=u8.length-10;if(need!==have)return null;return{w,h,pixels:u8.slice(10)}}
+function draw(w,h,pix){const ctx=ui.cv.getContext("2d");ui.cv.width=Math.max(1,w);ui.cv.height=Math.max(1,h);const img=ctx.createImageData(w,h);img.data.set(pix);ctx.putImageData(img,0,0);applyZoom()}
+function applyZoom(){if(!S.lastDims)return;const d=i18n[S.lang];const box=ui.cv.parentElement;const mode=S.fitMode;let targetW=S.lastDims.w, targetH=S.lastDims.h;if(mode==="fit"||mode==="fill"){const bw=box.clientWidth-24;const bh=box.clientHeight-24;const rs=mode==="fit"?Math.min(bw/targetW,bh/targetH):Math.max(bw/targetW,bh/targetH);ui.cv.style.width=`${Math.max(1,Math.round(targetW*rs))}px`;ui.cv.style.height=`${Math.max(1,Math.round(targetH*rs))}px`}else{const mul=mode==="1x"?1:mode==="2x"?2:4;ui.cv.style.width=`${targetW*mul}px`;ui.cv.style.height=`${targetH*mul}px`}ui.zLabel.textContent=`${d.zoom}: ${(S.zoom*100|0)}%`}
+function onBruhFile(file){const d=i18n[S.lang];ui.status.textContent="…";file.arrayBuffer().then(buf=>{const p=header(buf);if(!p){ui.status.textContent=d.invalid;ui.status.classList.add("bad");return}ui.status.classList.remove("bad");S.lastBruh=new Uint8Array(buf);S.lastDims={w:p.w,h:p.h};S.zoom=1;draw(p.w,p.h,p.pixels);ui.vName.textContent=`${d.name}: ${file.name}`;ui.vSize.textContent=`${d.size}: ${fmt(file.size)}`;ui.vDims.textContent=`${d.dims}: ${p.w}×${p.h}`;ui.vInfo.textContent=`${d.info}: RGBA32`;ui.dlPNG.classList.remove("hidden");ui.dlBRUH.classList.remove("hidden");ui.status.textContent=d.ok}).catch(()=>{ui.status.textContent="Error";ui.status.classList.add("bad")})}
+function loadAnyToCanvas(file,max){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{let w=img.naturalWidth||img.width;let h=img.naturalHeight||img.height;if(max){const[mw,mh]=max.split("x").map(Number);if(w>mw||h>mh){const s=Math.min(mw/w,mh/h);w=Math.max(1,Math.round(w*s));h=Math.max(1,Math.round(h*s))}}const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res({c,w,h})};img.onerror=rej;img.src=url})}
+function encodeBRUH(cnv,mode){const x=cnv.getContext("2d");const w=cnv.width,h=cnv.height;const raw=x.getImageData(0,0,w,h).data;let data;if(mode==="rgb"){data=new Uint8Array(w*h*4);for(let i=0,j=0;i<raw.length;i+=4,j+=4){data[j]=raw[i];data[j+1]=raw[i+1];data[j+2]=raw[i+2];data[j+3]=255}}else{data=raw}const head=new TextEncoder().encode("BRUH01");const wh=new Uint8Array(4);wh[0]=w&255;wh[1]=(w>>8)&255;wh[2]=h&255;wh[3]=(h>>8)&255;const out=new Uint8Array(10+data.length);out.set(head,0);out.set(wh,6);out.set(data,10);return out}
+function onAnyFile(file){const d=i18n[S.lang];ui.status.textContent="…";const maxSel=ui.maxRes.value==="0"?null:ui.maxRes.value;const channel=ui.chanSel.value;loadAnyToCanvas(file,maxSel).then(({c,w,h})=>{const b=encodeBRUH(c,channel);S.lastBruh=b;S.lastDims={w,h};S.zoom=1;const ctx=ui.cv.getContext("2d");ui.cv.width=w;ui.cv.height=h;ctx.drawImage(c,0,0);ui.cName.textContent=`${d.name}: ${file.name}`;ui.cSize.textContent=`${d.size}: ${fmt(file.size)}`;ui.cDims.textContent=`${d.dims}: ${w}×${h}`;ui.cInfo.textContent=`${d.info}: ${channel==="rgb"?"RGB24→RGBA32":"RGBA32"}`;ui.dlBRUH.classList.remove("hidden");ui.dlPNG.classList.remove("hidden");ui.status.textContent=d.ok;const blob=new Blob([b],{type:"application/octet-stream"});const url=URL.createObjectURL(blob);ui.dlLink.href=url;ui.dlLink.download=(file.name.replace(/\.[^/.]+$/,"")||"image")+".bruh";ui.dlLink.classList.remove("hidden")}).catch(()=>{ui.status.textContent="Error";ui.status.classList.add("bad")})}
+function dropWire(zone,cb){zone.addEventListener("dragover",e=>{e.preventDefault();zone.classList.add("drag")});zone.addEventListener("dragleave",()=>zone.classList.remove("drag"));zone.addEventListener("drop",e=>{e.preventDefault();zone.classList.remove("drag");const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)cb(f)})}
+function wheelZoom(e){if(!S.lastDims)return;const delta=Math.sign(e.deltaY);S.zoom=Math.min(8,Math.max(0.1,S.zoom-(delta*0.1)));ui.zLabel.textContent=`${i18n[S.lang].zoom}: ${(S.zoom*100|0)}%`;e.preventDefault()}
+ui.lang.value=S.lang;setLang(S.lang);setTheme(S.theme);setDirByLang(S.lang)
+ui.lang.addEventListener("change",e=>{setLang(e.target.value)})
+ui.theme.addEventListener("click",()=>setTheme(S.theme==="dark"?"light":"dark"))
+ui.tabView.addEventListener("click",()=>selectTab("view"))
+ui.tabConv.addEventListener("click",()=>selectTab("conv"))
+ui.inBruh.addEventListener("change",e=>{const f=e.target.files[0];if(f)onBruhFile(f)})
+ui.inAny.addEventListener("change",e=>{const f=e.target.files[0];if(f)onAnyFile(f)})
+dropWire(ui.dropBruh,f=>onBruhFile(f))
+dropWire(ui.dropAny,f=>onAnyFile(f))
+ui.zIn.addEventListener("click",()=>{S.zoom=Math.min(8,S.zoom+0.1);applyZoom()})
+ui.zOut.addEventListener("click",()=>{S.zoom=Math.max(0.1,S.zoom-0.1);applyZoom()})
+ui.z100.addEventListener("click",()=>{S.zoom=1;applyZoom()})
+ui.cv.addEventListener("wheel",wheelZoom,{passive:false})
+ui.dlPNG.addEventListener("click",()=>{ui.cv.toBlob(b=>{if(!b)return;const url=URL.createObjectURL(b);ui.dlLink.href=url;ui.dlLink.download="image.png";ui.dlLink.click()},"image/png")})
+ui.dlBRUH.addEventListener("click",()=>{if(!S.lastBruh)return;const blob=new Blob([S.lastBruh],{type:"application/octet-stream"});const url=URL.createObjectURL(blob);ui.dlLink.href=url;ui.dlLink.download="image.bruh";ui.dlLink.click()})
+ui.fitMode.value=S.fitMode;ui.fitMode.addEventListener("change",e=>{S.fitMode=e.target.value;localStorage.setItem("bruh_fit",S.fitMode);applyZoom()})
+selectTab("view")
+</script>
+</body>
+</html>
